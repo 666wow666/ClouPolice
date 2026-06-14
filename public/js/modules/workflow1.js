@@ -73,6 +73,7 @@
                 '身份证号：' + (basicInfo.idCard || '-') + '\n' +
                 '出生日期：' + (basicInfo.birthDate || '-') + '\n' +
                 '年龄：' + (basicInfo.age || '-') + '\n' +
+                '性别：' + (basicInfo.gender || '-') + '\n' +
                 '住址：' + (basicInfo.address || '-') + '\n' +
                 '户籍所在地：' + (basicInfo.registeredAddress || '-') + '\n' +
                 '联系方式：' + (basicInfo.phone || '-') + '\n' +

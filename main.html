@@ -119,6 +119,10 @@
                             <button class="toolbar-btn" onclick="formatDoc('justifyRight')" title="右对齐">
                                 <i class="fas fa-align-right"></i>
                             </button>
+                            <div style="width: 1px; height: 24px; background: #e2e8f0; margin: 0 8px;"></div>
+                            <button class="toolbar-btn" onclick="insertRecordHeaderFromBasicInfo()" title="插入笔录头部" style="padding: 4px 8px;">
+                                <i class="fas fa-file-signature"></i>
+                            </button>
                         </div>
                         <div id="record-output" class="record-output" contenteditable="true">
                             <div class="record-placeholder">
@@ -331,6 +335,10 @@
                                 <div class="info-label">年龄</div>
                                 <div class="info-value" id="displayAge">-</div>
                             </div>
+                            <div class="info-item">
+                                <div class="info-label">性别</div>
+                                <div class="info-value" id="displayGender">-</div>
+                            </div>
                         </div>
                         <div class="info-row">
                             <div class="info-item">
@@ -386,7 +394,7 @@
                                 <input type="text" class="info-input" id="editIdCard" placeholder="请输入" maxlength="18">
                             </div>
                         </div>
-                        <div class="info-row" id="editBirthAgeRow" style="display: none;">
+                        <div class="info-row" id="editBirthAgeGenderRow" style="display: none;">
                             <div class="info-item">
                                 <div class="info-label">出生日期</div>
                                 <input type="text" class="info-input" id="editBirthDate" readonly placeholder="自动从身份证号推算">
@@ -394,6 +402,10 @@
                             <div class="info-item">
                                 <div class="info-label">年龄</div>
                                 <input type="text" class="info-input" id="editAge" readonly placeholder="自动从身份证号推算">
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">性别</div>
+                                <input type="text" class="info-input" id="editGender" readonly placeholder="自动从身份证号推算">
                             </div>
                         </div>
                         <div class="info-row">
@@ -445,6 +457,17 @@
     </div>
 
     <script>
+        /**
+         * 手动调用工作流2生成笔录
+         * @param {string} text - 录音文本
+         * @param {Object} basicInfo - 基本信息
+         */
+        window.sendToWorkflow2Manual = function(text, basicInfo) {
+            if (window.Workflow2Module && window.Workflow2Module.send) {
+                window.Workflow2Module.send(text, basicInfo);
+            }
+        };
+
         // ==================== 按钮事件绑定 ====================
 
         /**
@@ -596,8 +619,9 @@
 <meta charset="utf-8">
 <title>询问笔录</title>
 <style>
-body { font-family: '仿宋_GB2312', '仿宋', FangSong, SimSun; font-size: 16pt; line-height: 1.8; margin: 2cm 2.5cm 2cm 2cm; }
+body { font-family: '仿宋_GB2312', '仿宋', FangSong, SimSun; font-size: 10pt !important;  margin: 2cm 2.5cm 2cm 2cm; }
 h1 { text-align: center; font-size: 20pt; font-weight: bold; margin: 30px 0; }
+div, p { font-size: inherit !important; }
 </style>
 <!--[if gte mso 9]>
 <xml>
@@ -744,7 +768,7 @@ ${content}
          */
         function parseIdCard(idCard) {
             if (!idCard || idCard.length !== 18) {
-                return { birthDate: '', age: '' };
+                return { birthDate: '', age: '', gender: '' };
             }
             
             // 提取出生日期（第7-14位）
@@ -762,7 +786,14 @@ ${content}
                 age--;
             }
             
-            return { birthDate: birthDateStr, age: age + '岁' };
+            // 识别性别（第17位，奇数为男，偶数为女）
+            const genderCode = parseInt(idCard.charAt(16));
+            let gender = '';
+            if (!isNaN(genderCode)) {
+                gender = genderCode % 2 === 1 ? '男' : '女';
+            }
+            
+            return { birthDate: birthDateStr, age: age + '岁', gender: gender };
         }
 
         /**
@@ -770,19 +801,22 @@ ${content}
          */
         function handleEditIdCardChange() {
             const idCard = document.getElementById('editIdCard').value.trim();
-            const birthAgeRow = document.getElementById('editBirthAgeRow');
+            const birthAgeGenderRow = document.getElementById('editBirthAgeGenderRow');
             const birthDateInput = document.getElementById('editBirthDate');
             const ageInput = document.getElementById('editAge');
+            const genderInput = document.getElementById('editGender');
             
             if (idCard.length === 18) {
                 const result = parseIdCard(idCard);
                 birthDateInput.value = result.birthDate;
                 ageInput.value = result.age;
-                birthAgeRow.style.display = 'flex';
+                genderInput.value = result.gender;
+                birthAgeGenderRow.style.display = 'flex';
             } else {
                 birthDateInput.value = '';
                 ageInput.value = '';
-                birthAgeRow.style.display = 'none';
+                genderInput.value = '';
+                birthAgeGenderRow.style.display = 'none';
             }
         }
 
@@ -818,6 +852,7 @@ ${content}
             document.getElementById('displayIdCard').textContent = info.idCard || '-';
             document.getElementById('displayBirthDate').textContent = info.birthDate || '-';
             document.getElementById('displayAge').textContent = info.age || '-';
+            document.getElementById('displayGender').textContent = info.gender || '-';
             document.getElementById('displayAddress').textContent = info.address || '-';
             document.getElementById('displayRegisteredAddress').textContent = info.registeredAddress || '-';
             document.getElementById('displayPhone').textContent = info.phone || '-';
@@ -840,6 +875,7 @@ ${content}
             document.getElementById('editIdCard').value = info.idCard || '';
             document.getElementById('editBirthDate').value = info.birthDate || '';
             document.getElementById('editAge').value = info.age || '';
+            document.getElementById('editGender').value = info.gender || '';
             document.getElementById('editAddress').value = info.address || '';
             document.getElementById('editRegisteredAddress').value = info.registeredAddress || '';
             document.getElementById('editPhone').value = info.phone || '';
@@ -900,6 +936,7 @@ ${content}
                 idCard: document.getElementById('editIdCard').value.trim(),
                 birthDate: document.getElementById('editBirthDate').value.trim(),
                 age: document.getElementById('editAge').value.trim(),
+                gender: document.getElementById('editGender').value.trim(),
                 address: document.getElementById('editAddress').value.trim(),
                 registeredAddress: document.getElementById('editRegisteredAddress').value.trim(),
                 phone: document.getElementById('editPhone').value.trim(),
@@ -921,6 +958,17 @@ ${content}
         function getBasicInfo() {
             var savedInfo = localStorage.getItem('basicInfo');
             return savedInfo ? JSON.parse(savedInfo) : null;
+        }
+
+        /**
+         * 从localStorage获取基本信息并插入笔录头部
+         */
+        function insertRecordHeaderFromBasicInfo() {
+            var basicInfo = getBasicInfo();
+            if (window.Workflow2Module && window.Workflow2Module.insertRecordHeader) {
+                window.Workflow2Module.setCurrentBasicInfo(basicInfo);
+                window.Workflow2Module.insertRecordHeader(basicInfo);
+            }
         }
 
         /**

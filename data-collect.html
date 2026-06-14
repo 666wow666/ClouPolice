@@ -273,7 +273,7 @@
                         </div>
                     </div>
 
-                    <div class="form-row" id="birthAgeRow" style="display: none;">
+                    <div class="form-row" id="birthAgeGenderRow" style="display: none;">
                         <div class="form-group">
                             <label class="form-label">出生日期</label>
                             <input type="text" class="form-input" id="birthDate" readonly placeholder="自动从身份证号推算">
@@ -281,6 +281,10 @@
                         <div class="form-group">
                             <label class="form-label">年龄</label>
                             <input type="text" class="form-input" id="age" readonly placeholder="自动从身份证号推算">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">性别</label>
+                            <input type="text" class="form-input" id="gender" readonly placeholder="自动从身份证号推算">
                         </div>
                     </div>
 
@@ -313,13 +317,13 @@
         // ==================== 身份证号处理系统 ====================
 
         /**
-         * 从身份证号提取出生日期和计算年龄
+         * 从身份证号提取出生日期、计算年龄和识别性别
          * @param {string} idCard - 18位身份证号
-         * @returns {Object} - 包含birthDate和age的对象
+         * @returns {Object} - 包含birthDate、age和gender的对象
          */
         function parseIdCard(idCard) {
             if (!idCard || idCard.length !== 18) {
-                return { birthDate: '', age: '' };
+                return { birthDate: '', age: '', gender: '' };
             }
             
             // 提取出生日期（第7-14位）
@@ -337,7 +341,14 @@
                 age--;
             }
             
-            return { birthDate: birthDateStr, age: age + '岁' };
+            // 识别性别（第17位，奇数为男，偶数为女）
+            const genderCode = parseInt(idCard.charAt(16));
+            let gender = '';
+            if (!isNaN(genderCode)) {
+                gender = genderCode % 2 === 1 ? '男' : '女';
+            }
+            
+            return { birthDate: birthDateStr, age: age + '岁', gender: gender };
         }
 
         /**
@@ -345,19 +356,22 @@
          */
         function handleIdCardChange() {
             const idCard = document.getElementById('idCard').value.trim();
-            const birthAgeRow = document.getElementById('birthAgeRow');
+            const birthAgeGenderRow = document.getElementById('birthAgeGenderRow');
             const birthDateInput = document.getElementById('birthDate');
             const ageInput = document.getElementById('age');
+            const genderInput = document.getElementById('gender');
             
             if (idCard.length === 18) {
                 const result = parseIdCard(idCard);
                 birthDateInput.value = result.birthDate;
                 ageInput.value = result.age;
-                birthAgeRow.style.display = 'flex';
+                genderInput.value = result.gender;
+                birthAgeGenderRow.style.display = 'flex';
             } else {
                 birthDateInput.value = '';
                 ageInput.value = '';
-                birthAgeRow.style.display = 'none';
+                genderInput.value = '';
+                birthAgeGenderRow.style.display = 'none';
             }
         }
 
@@ -384,7 +398,8 @@
                 caseRelation: document.getElementById('caseRelation').value.trim(),      // 与案件关系
                 caseInfo: document.getElementById('caseInfo').value.trim(),              // 警情信息
                 birthDate: document.getElementById('birthDate').value.trim(),            // 出生日期
-                age: document.getElementById('age').value.trim()                        // 年龄
+                age: document.getElementById('age').value.trim(),                        // 年龄
+                gender: document.getElementById('gender').value.trim()                   // 性别
             };
             
             // 保存到localStorage（持久化存储）
@@ -432,6 +447,7 @@
                 document.getElementById('caseInfo').value = data.caseInfo || '';
                 document.getElementById('birthDate').value = data.birthDate || '';
                 document.getElementById('age').value = data.age || '';
+                document.getElementById('gender').value = data.gender || '';
                 
                 // 恢复单选按钮状态
                 if (data.isNPCDeputy) {
