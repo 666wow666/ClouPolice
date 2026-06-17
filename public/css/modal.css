@@ -194,3 +194,239 @@
 .basic-info-btn.cancel:hover {
     background: #f9fafb;
 }
+
+/* ==================== 新建审讯 - 基本信息弹窗 ==================== */
+
+.new-interrogation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 10002;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-interrogation-modal.active {
+    display: flex;
+}
+
+.new-interrogation-box {
+    background: white;
+    border-radius: 10px;
+    width: 720px;
+    max-width: calc(100vw - 40px);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+}
+
+.new-interrogation-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.new-interrogation-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.new-interrogation-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+
+.new-interrogation-close:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.new-interrogation-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    background: #fafbfc;
+}
+
+.new-info-section {
+    background: white;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border: 1px solid #e5e7eb;
+}
+
+.new-info-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e3a5f;
+    padding: 6px 10px;
+    background: #f1f5f9;
+    border-left: 3px solid #2563eb;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.new-info-section-title i {
+    color: #2563eb;
+}
+
+.new-info-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.new-info-row.two-col .new-info-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.new-info-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 5px;
+}
+
+.new-info-label .required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.new-info-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.15s;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.new-info-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.new-info-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    resize: vertical;
+    background: #fff;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.new-info-textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.new-info-radio-group {
+    display: flex;
+    gap: 20px;
+    padding: 4px 0;
+}
+
+.new-info-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #374151;
+}
+
+.new-info-radio-item input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.new-interrogation-footer {
+    padding: 10px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.new-interrogation-btn {
+    padding: 7px 18px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+}
+
+.new-interrogation-btn.cancel {
+    background: #fff;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.new-interrogation-btn.cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.new-interrogation-btn.submit {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: white;
+    box-shadow: 0 2px 5px rgba(37,99,235,0.25);
+}
+
+.new-interrogation-btn.submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(37,99,235,0.35);
+}
+
+.new-interrogation-btn.submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.new-info-label .required {
+    display: none;
+}

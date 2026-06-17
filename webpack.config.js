@@ -13,24 +13,22 @@ const envKeys = Object.keys(env).reduce((prev, key) => {
 
 module.exports = {
   entry: {
-    main: './src/frontend/views/main.js',
-    auth: './src/frontend/views/auth.js',
-    'data-collect': './src/frontend/views/data-collect.js'
+    analysis: './src/frontend/views/analysis.jsx'
   },
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'analysis.bundle.js',
+    path: path.resolve(__dirname, 'analyzer/static/js'),
     clean: true
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env', '@babel/preset-react']
           }
         }
       },
@@ -42,42 +40,15 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/frontend/index.html',
-      filename: 'main.html',
-      chunks: ['main']
-    }),
-    new HtmlWebpackPlugin({
-      template: './src/frontend/views/auth.html',
-      filename: 'auth.html',
-      chunks: ['auth']
-    }),
-    new HtmlWebpackPlugin({
-      template: './src/frontend/views/data-collect.html',
-      filename: 'data-collect.html',
-      chunks: ['data-collect']
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: 'public/css', to: 'css' },
-        { from: 'public/js', to: 'js' },
-        { from: 'public/image', to: 'image' },
-        { from: '.env', to: '.' },
-        { from: 'app.ico', to: '.' }
-      ]
+      template: './analyzer/templates/analysis.html',
+      filename: path.resolve(__dirname, 'analyzer/templates/analysis.html'),
+      publicPath: '/analyzer/static/js/',
+      chunks: ['analysis']
     }),
     new webpack.DefinePlugin(envKeys)
   ],
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'public')
-    },
-    compress: true,
-    port: process.env.PORT || 5000,
-    hot: true,
-    historyApiFallback: true
-  },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.jsx']
   },
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 };

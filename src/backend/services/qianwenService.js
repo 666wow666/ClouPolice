@@ -35,6 +35,9 @@ class QianwenService extends BaseAIService {
       throw new Error('QIANWEN_API_KEY 未配置，请检查 .env 文件');
     }
 
+    // 笔录工作流(workflowNum=2)启用思考，提问工作流(workflowNum=1)保持关闭
+    const enableThinking = workflowNum === 2;
+
     const response = await fetch(`${this.baseURL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -47,10 +50,7 @@ class QianwenService extends BaseAIService {
         temperature: temperature || 0.7,
         max_tokens: 8192,
         stream: false,
-        thinking: {
-          type: 'enabled',
-          budget_tokens: 4000
-        }
+        enable_thinking: enableThinking // 笔录工作流启用思考过程，提问工作流保持关闭
       })
     });
 

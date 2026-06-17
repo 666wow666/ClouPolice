@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔录分析结果 - 笔录分析审查系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js"></script>
+    <link rel="stylesheet" href="static/css/analyzer.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a1433 0%, #0d1b3a 50%, #10224a 100%);
+        }
+        #root {
+            min-height: 100vh;
+        }
+        /* Ant Design 暗色主题覆盖 */
+        .ant-card {
+            background: transparent !important;
+            border: none !important;
+        }
+        /* 自定义卡片的背景不被 ant-card 规则覆盖 */
+        .ant-card.analysis-card,
+        .ant-card.analysis-score-card {
+            background: transparent !important;
+            border: none !important;
+        }
+        .ant-card-head {
+            border-bottom: 1px solid rgba(91,160,255,0.2) !important;
+        }
+        .ant-card-head-title {
+            color: #dbe7ff !important;
+        }
+        .ant-descriptions-item-label {
+            color: #8fa4c0 !important;
+        }
+        .ant-descriptions-item-content {
+            color: #dbe7ff !important;
+        }
+        .ant-list-item {
+            border-bottom: none !important;
+            padding: 4px 0 !important;
+        }
+        .ant-divider {
+            border-color: rgba(91,160,255,0.2) !important;
+        }
+        .ant-typography {
+            color: #dbe7ff !important;
+        }
+        .ant-typography.ant-typography-secondary {
+            color: #8fa4c0 !important;
+        }
+        .ant-alert {
+            border-radius: 8px;
+            background: transparent !important;
+            border: 1px solid rgba(91,160,255,0.25) !important;
+        }
+        .ant-alert-warning {
+            background: transparent !important;
+            border-color: rgba(245,165,36,0.3) !important;
+        }
+        .ant-alert-error {
+            background: transparent !important;
+            border-color: rgba(255,107,107,0.3) !important;
+        }
+        .ant-alert-success {
+            background: transparent !important;
+            border-color: rgba(74,217,145,0.3) !important;
+        }
+        .ant-alert-info {
+            background: transparent !important;
+            border-color: rgba(91,160,255,0.3) !important;
+        }
+        .ant-alert-message {
+            color: #dbe7ff !important;
+        }
+        .ant-alert-warning .ant-alert-message {
+            color: #f5a524 !important;
+        }
+        .ant-alert-error .ant-alert-message {
+            color: #ff6b6b !important;
+        }
+        .ant-alert-success .ant-alert-message {
+            color: #4ad991 !important;
+        }
+        .ant-alert-description {
+            color: #dbe7ff !important;
+        }
+        .ant-tag {
+            background: transparent !important;
+            border-width: 1px;
+        }
+        .ant-tag-success {
+            border-color: #4ad991 !important;
+            color: #4ad991 !important;
+        }
+        .ant-tag-warning {
+            border-color: #f5a524 !important;
+            color: #f5a524 !important;
+        }
+        .ant-tag-error {
+            border-color: #ff6b6b !important;
+            color: #ff6b6b !important;
+        }
+        .ant-tag-blue {
+            border-color: #5ba0ff !important;
+            color: #5ba0ff !important;
+        }
+        .ant-tag-magenta {
+            border-color: #b57bff !important;
+            color: #b57bff !important;
+        }
+        .ant-badge-status-text {
+            color: #dbe7ff !important;
+        }
+        .ant-btn-primary {
+            background: #5ba0ff;
+            border-color: #5ba0ff;
+        }
+        .ant-btn-primary:hover {
+            background: #8ec3ff;
+            border-color: #8ec3ff;
+        }
+    </style>
+<script defer src="static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script><script defer src="/analyzer/static/js/analysis.bundle.js"></script></head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

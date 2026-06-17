@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔录分析审查系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/analyzer.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="dashboard-title">
+                <i class="fas fa-shield-halved"></i>
+                <span>笔录分析审查系统</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn small" onclick="loadCases()" title="刷新">
+                <i class="fas fa-arrow-rotate-right"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- 案件卷宗选择区 -->
+        <section class="panel upload-panel">
+            <div class="panel-header">
+                <div class="panel-title"><i class="fas fa-folder-open"></i> 案件卷宗</div>
+                <div class="panel-tools">
+                    <span id="caseCountTip" class="case-count">共 0 份笔录</span>
+                </div>
+            </div>
+
+            <div class="case-grid" id="caseGrid">
+                <div class="case-empty">
+                    <i class="fas fa-folder-open"></i>
+                    <div>正在加载案件卷宗...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 加载动画遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="loading-text" id="loadingText">正在加载...</div>
+    </div>
+
+    <script>
+        // ===================== 全局数据 =====================
+        let caseList = [];
+
+        // ===================== DOM 引用 =====================
+        const caseGrid = document.getElementById('caseGrid');
+        const caseCountTip = document.getElementById('caseCountTip');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+
+        // ===================== 工具函数 =====================
+        function escapeHtml(t) {
+            if (!t) return '';
+            const d = document.createElement('div'); d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function showLoading(text) {
+            if (loadingText) loadingText.textContent = text || '正在加载...';
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        // ===================== 加载案件列表 =====================
+        async function loadCases() {
+            caseGrid.innerHTML = '<div class="case-empty"><i class="fas fa-spinner fa-spin"></i><div>正在加载案件卷宗...</div></div>';
+            try {
+                const res = await fetch('cases');
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                caseList = data.cases || [];
+                caseCountTip.textContent = `共 ${caseList.length} 份笔录`;
+                renderCaseList();
+            } catch (err) {
+                caseGrid.innerHTML = `<div class="case-empty"><i class="fas fa-triangle-exclamation"></i><div>加载失败：${escapeHtml(err.message)}</div></div>`;
+            }
+        }
+
+        // ===================== 渲染案件列表 =====================
+        function renderCaseList() {
+            if (!caseList.length) {
+                caseGrid.innerHTML = `<div class="case-empty"><i class="fas fa-folder-open"></i><div>暂无案件卷宗</div></div>`;
+                return;
+            }
+            caseGrid.innerHTML = caseList.map((c) => `
+                <div class="case-card" data-case-id="${escapeHtml(c.case_id)}" onclick="selectCase('${escapeHtml(c.case_id)}', '${escapeHtml(c.name)}')">
+                    <div class="case-icon">
+                        <i class="fas fa-folder-closed"></i>
+                    </div>
+                    <div class="case-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>
+                </div>
+            `).join('');
+        }
+
+        // ===================== 选择案件并跳转 =====================
+        async function selectCase(caseId, caseName) {
+            showLoading('正在准备分析...');
+
+            try {
+                // 读取案件内容（会保存到 LAST_CONTENT）
+                const selectRes = await fetch('select-case', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ case_id: caseId })
+                });
+                const selectData = await selectRes.json();
+                if (selectData.error) throw new Error(selectData.error);
+
+                hideLoading();
+
+                // 跳转到分析页面，传递案件ID和名称
+                const encodedName = encodeURIComponent(caseName || caseId);
+                window.location.href = `analysis?case_id=${encodeURIComponent(caseId)}&name=${encodedName}`;
+
+            } catch (err) {
+                hideLoading();
+                alert('操作失败：' + err.message);
+            }
+        }
+
+        // ===================== 初始化 =====================
+        document.addEventListener('DOMContentLoaded', loadCases);
+    </script>
+</body>
+</html>
